@@ -10,7 +10,7 @@ from sklearn.decomposition import PCA
 from sklearn.svm import SVC
 from sklearn.preprocessing import MultiLabelBinarizer
 from sklearn.multiclass import OneVsRestClassifier
-from skimage.filters import sobel
+from maxflow import fastmin as fm
 
 import warnings
 warnings.filterwarnings("ignore")
@@ -32,7 +32,7 @@ def color_quant(img):
 	res = color_list[label.flatten()]
 	return np.concatenate((img[:,:,0:-2], res.reshape((img[:,:,1:].shape))), 2)
 
-def ftr_ext(crow,ccol,img,color=False,test=False):
+def ftr_ext(crow,ccol,img,color=False):
 	ind_ftr=[None] * (4*x*x+128+2)
 	flag = 1
 
@@ -85,8 +85,6 @@ def ftr_ext(crow,ccol,img,color=False,test=False):
 		pixels.append([crow,ccol])
 		features.append(np.asarray(ind_ftr))
 		#print(crow,ccol,mask.shape,len(ind_ftr))
-	if test==True:
-		return pixels,N.append([[crow-1,ccol-1],[crow-1,ccol],[crow-1,ccol+1],[crow,ccol-1],[crow,ccol+1],[crow+1,ccol-1],[crow+1,ccol],[crow+1,ccol+1]]),features
 	return pixels,features
 
 def pca_(features,r):
@@ -113,7 +111,6 @@ print("Display Image: Done")
 #--------------Train-------------
 print("Train - ")
 traing = cv2.cvtColor(train, cv2.COLOR_RGB2GRAY)
-edge_sobel = sobel(traing)
 
 #Color Quantization
 start = timeit.default_timer()
@@ -158,7 +155,7 @@ i=0
 for crow in range(0,rows+1):
 	for ccol in range(0,cols+1):
 		if i<temp:
-			pixels,N,features = ftr_ext(crow,ccol,test,test=True)
+			pixels,features = ftr_ext(crow,ccol,test)
 			i+=1
 #PCA
 pca_ftr_test = pca_(features,red)
@@ -169,17 +166,16 @@ print ("	Feature Extraction and PCA: Done in ",stop-start," sec - Reduced compon
 #Predict
 start = timeit.default_timer()
 predict = clf.predict(pca_ftr_test)
+predict_prob = clf.predict_proba(pca_ftr_test)
 stop = timeit.default_timer()
 print ("	Prediction: Done in ",stop-start," sec - Test: ",pca_ftr_test.shape,"	Result: ",len(predict))
 
 
 #Colorization
-
-##MRF
-
-
-
-
+pixels = np.matrix(pixels)
+labeled = pixels[:,0]*1000000+pixels[:,1]
+print(predict_prob.shape,labeled.shape)
+#------------------------------------------------------------------------------------------------------------------------------
 #-------------Compare------------------
 orig = cv2.imread('img_'+t+'.jpg',1)
 
@@ -188,4 +184,4 @@ orig = cv2.imread('img_'+t+'.jpg',1)
 cv2.waitKey(0)
 cv2.destroyAllWindows()
 #print(features.shape,"\nFinal Display: Done")
-#cv2.imwrite('final_'+tr+t,final)
+#cv2.imwrite('final_'+tr+t,final)-
