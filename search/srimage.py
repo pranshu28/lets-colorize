@@ -1,3 +1,5 @@
+#Ignore this file. Just kept to keep track of how I progressed
+
 # import the necessary packages
 from skimage.measure import structural_similarity as ssim
 import matplotlib.pyplot as plt
