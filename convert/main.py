@@ -89,14 +89,12 @@ def ftr_ext(crow,ccol,img,color=False):
 
 def pca_(features,r):
 	features = np.asmatrix(features)
-	pca = PCA(n_components=r)																		
+	pca = PCA(n_components=r)
 	pca.fit(features)
 	return pca.transform(features)
 
 
 #--------------input images---------
-tr=str(7)
-t=str(8)
 train = cv2.imread('img_'+tr+'.jpg',1)
 test = cv2.imread('img_'+t+'.jpg',0)
 print("Input Image: Done")
@@ -110,7 +108,6 @@ print("Display Image: Done")
 
 #--------------Train-------------
 print("Train - ")
-traing = cv2.cvtColor(train, cv2.COLOR_RGB2GRAY)
 
 #Color Quantization
 start = timeit.default_timer()
@@ -121,12 +118,12 @@ print ("	Color Quantization: Done in ",stop-start," sec")
 
 #Feature Extraction
 start = timeit.default_timer()
-rows, cols = train.shape[:-1]
+rows, cols = quant_train.shape[:-1]
 features,pixels=[],[]
-while len(pixels)<int(rows*cols*.01*perc)+1:																	
+while len(pixels)<int(rows*cols*.01*perc)+1:
 	crow,ccol = randint(0,rows+1),randint(0,cols+1)
 	if [crow,ccol] not in pixels:
-		pixels,features = ftr_ext(crow,ccol,train,color=True)
+		pixels,features = ftr_ext(crow,ccol,quant_train,color=True)
 #PCA
 pca_ftr = pca_(features,red)
 stop = timeit.default_timer()
@@ -136,7 +133,7 @@ print ("	Feature Extraction and PCA: Done in ",stop-start," sec - Reduced compon
 #Classification
 start = timeit.default_timer()
 pixels = np.matrix(pixels).T
-train_svc = quant_train[pixels[0,:],pixels[1,:],:].reshape(pca_ftr.shape[0],3)																							
+train_svc = quant_train[pixels[0,:],pixels[1,:],:].reshape(pca_ftr.shape[0],3)
 Y = MultiLabelBinarizer().fit_transform(train_svc[:,1:])
 clf = OneVsRestClassifier(SVC(C=reg,kernel='linear',probability=True))
 clf.fit(pca_ftr, Y)
@@ -175,7 +172,18 @@ print ("	Prediction: Done in ",stop-start," sec - Test: ",pca_ftr_test.shape,"	R
 pixels = np.matrix(pixels)
 labeled = pixels[:,0]*1000000+pixels[:,1]
 print(predict_prob.shape,labeled.shape)
-#------------------------------------------------------------------------------------------------------------------------------
+print(np.concatenate((predict_prob,labeled)))
+
+##Cost funtion
+"""for p in pixels:
+	crow,ccol=p[0],p[1]
+	N=[[crow-1,ccol-1],[crow-1,ccol],[crow-1,ccol+1],[crow,ccol-1],[crow,ccol+1],[crow+1,ccol-1],[crow+1,ccol],[crow+1,ccol+1]]
+	Ep = 0"""
+	#for nb in N and nb>=0 and nb[0]<=rows and nb[1]<=cols:
+
+
+
+
 #-------------Compare------------------
 orig = cv2.imread('img_'+t+'.jpg',1)
 
@@ -184,4 +192,4 @@ orig = cv2.imread('img_'+t+'.jpg',1)
 cv2.waitKey(0)
 cv2.destroyAllWindows()
 #print(features.shape,"\nFinal Display: Done")
-#cv2.imwrite('final_'+tr+t,final)-
+#cv2.imwrite('final_'+tr+t,final)
