@@ -9,8 +9,8 @@ import warnings
 warnings.filterwarnings("ignore")
 
 x = 20								#Window size/2
-red = 16							#PCA Reduce components
-perc = .015							#Percentage of random pixels to train
+red = 32							#PCA Reduce components
+perc = 1.5							#Percentage of random pixels to train
 
 def ftr_ext(crow,ccol,img,color=False):
 	ind_ftr=[None] * (4*x*x+(128*3)+2)
@@ -83,9 +83,12 @@ quant_train = cv2.imread('quant_train.jpg',1)
 start = timeit.default_timer()
 rows, cols = quant_train.shape[:-1]
 features,pixels=[],[]
+i=0
 while len(pixels)<int(rows*cols*.01*perc)+1:
 	crow,ccol = randint(0,rows+1),randint(0,cols+1)
 	if [crow,ccol] not in pixels:
+		print(i)
+		i=i+1
 		pixels,features = ftr_ext(crow,ccol,quant_train,color=True)
 
 #PCA
@@ -96,4 +99,4 @@ print ("Train - Feature Extraction and PCA: Done in ",stop-start," sec - Reduced
 pixels = np.matrix(pixels).T
 train_svc = quant_train[pixels[0,:],pixels[1,:],:].reshape(pca_ftr.shape[0],3)
 df = pd.DataFrame(np.concatenate((train_svc, pca_ftr), 1))
-df.to_csv('ftr_ext_train.csv', sep=',')
+df.to_csv('ftr_ext_train.csv', sep=',',header=False,index=False)
