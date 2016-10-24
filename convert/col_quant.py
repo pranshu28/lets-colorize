@@ -3,7 +3,7 @@ import numpy as np
 import cv2
 import pandas as pd
 
-k = 2								#K-means no. of discrete colors
+k = 16								#K-means no. of discrete colors
 
 def color_quant(img,k):
 	img = cv2.cvtColor(img, cv2.COLOR_RGB2Lab)
@@ -22,6 +22,5 @@ start = timeit.default_timer()
 colors,quant_train = color_quant(train,k)
 stop = timeit.default_timer()
 print ("Train - Color Quantization: Done in ",stop-start," sec")
-print(colors)
-colors.to_csv('colors.csv', sep=',',header=None)
+
 cv2.imwrite('quant_train.jpg',quant_train)
