@@ -8,7 +8,7 @@ warnings.filterwarnings("ignore")
 
 x = 20								#Window size/2
 red = 16							#PCA Reduce components
-temp = 500							#No. of pixels to test
+temp = 100000000					#No. of pixels to test
 
 def ftr_ext(crow,ccol,img,color=False):
 	ind_ftr=[None] * (4*x*x+(128*3)+2)
@@ -91,4 +91,4 @@ stop = timeit.default_timer()
 print ("Test - Feature Extraction and PCA: Done in ",stop-start," sec - Reduced components: ",pca_ftr_test.shape)
 
 dft = pd.DataFrame(np.concatenate((pixels, pca_ftr_test), 1))
-dft.to_csv('ftr_ext_test.csv', sep=',')
+dft.to_csv('ftr_ext_test.csv', sep=',',header=False,index=False)
