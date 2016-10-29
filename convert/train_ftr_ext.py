@@ -1,4 +1,3 @@
-import multiprocessing as mp
 from random import randint
 import timeit
 import numpy as np
