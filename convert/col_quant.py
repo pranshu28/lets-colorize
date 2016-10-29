@@ -1,5 +1,6 @@
 import timeit
 import numpy as np
+from scipy.cluster.vq import kmeans,vq
 import cv2
 import pandas as pd
 
@@ -7,20 +8,24 @@ k = 16								#K-means no. of discrete colors
 
 def color_quant(img,k):
 	img = cv2.cvtColor(img, cv2.COLOR_RGB2Lab)
-	Z = img[:,:,1:].reshape((-1,2))
-	Z = np.float32(Z)
-	criteria = (cv2.TERM_CRITERIA_EPS + cv2.TERM_CRITERIA_MAX_ITER, 10, 1.0)
-	ret,label,color_list=cv2.kmeans(Z,k,None,criteria,10,cv2.KMEANS_RANDOM_CENTERS)
-	color_list = np.uint8(color_list)
-	res = color_list[label.flatten()]
-	return pd.DataFrame(color_list),np.concatenate((img[:,:,0:-2], res.reshape((img[:,:,1:].shape))), 2)
+	a,b = np.float32(img[:,:,1]),np.float32(img[:,:,2])
+	pixel = np.squeeze(cv2.merge((a.flatten(),b.flatten())))
+	centroids,_ = kmeans(pixel,k)
+	qnt,_ = vq(pixel,centroids)
+	color_to_label_map = {c:i for i,c in enumerate([tuple(i) for i in centroids])} 
+	label_to_color_map = dict(zip(color_to_label_map.values(),color_to_label_map.keys()))
+	return qnt,label_to_color_map
 
-train = cv2.imread('img_7.jpg',1)
+train = cv2.imread('Train/img_1.jpg',1)
 
 #Color Quantization
 start = timeit.default_timer()
-colors,quant_train = color_quant(train,k)
+qnt,label = color_quant(train,k)
+labeled = pd.DataFrame(qnt.reshape(train.shape[:-1]))
+colors = pd.DataFrame(label).transpose()
 stop = timeit.default_timer()
 print ("Train - Color Quantization: Done in ",stop-start," sec")
 
-cv2.imwrite('quant_train.jpg',quant_train)
+
+colors.to_csv('colors.csv', sep=',',header=False,index=False)
+labeled.to_csv('labeled.csv', sep=',',header=False,index=False)
