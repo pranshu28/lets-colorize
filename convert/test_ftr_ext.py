@@ -6,9 +6,12 @@ from sklearn.decomposition import PCA
 import warnings
 warnings.filterwarnings("ignore")
 
-x = 20								#Window size/2
+test = cv2.imread('Train/img_2.jpg',0)
+rows, cols = test.shape
+
+x = 14								#Window size/2
 red = 16							#PCA Reduce components
-temp = 100000000					#No. of pixels to test
+temp = rows*cols					#No. of pixels to test
 
 def ftr_ext(crow,ccol,img,color=False):
 	ind_ftr=[None] * (4*x*x+(128*3)+2)
@@ -42,9 +45,9 @@ def ftr_ext(crow,ccol,img,color=False):
 	ind_ftr[:4*x*x] = ft
 
 	#SURF
-	octave2 = cv2.GaussianBlur(img, (0, 0), 1)
-	octave3 = cv2.GaussianBlur(img, (0, 0), 2)
-	surf = cv2.xfeatures2d.SURF_create(hessianThreshold=0,nOctaves=3,extended=True)
+	octave2 = cv2.GaussianBlur(mask, (0, 0), 1)
+	octave3 = cv2.GaussianBlur(mask, (0, 0), 2)
+	surf = cv2.xfeatures2d.SURF_create(hessianThreshold=0,extended=True)
 	kp1, des1 = surf.detectAndCompute(mask,None,useProvidedKeypoints = False)
 	kp2, des2 = surf.detectAndCompute(octave2,None,useProvidedKeypoints = False)
 	kp3, des3 = surf.detectAndCompute(octave3,None,useProvidedKeypoints = False)
@@ -64,7 +67,7 @@ def ftr_ext(crow,ccol,img,color=False):
 	if flag==1 and np.isfinite(ind_ftr.sum()):
 		pixels.append([crow,ccol])
 		features.append(np.asarray(ind_ftr))
-		#print(crow,ccol,mask.shape,len(ind_ftr))
+		print(len(pixels),crow,ccol,mask.shape,len(ind_ftr))
 	return pixels,features
 
 def pca_(features,r):
@@ -73,13 +76,13 @@ def pca_(features,r):
 	pca.fit(features)
 	return pca.transform(features)
 
-test = cv2.imread('img_8.jpg',0)
 
 #Feature Extraction
 start = timeit.default_timer()
 rows, cols = test.shape
 features,pixels,N=[],[],[]
 i=0
+
 for crow in range(0,rows+1):
 	for ccol in range(0,cols+1):
 		if i<temp:

@@ -1,7 +1,9 @@
+import timeit
 import numpy as np
 import pandas as pd
 import cv2
 import pygco
+import pandas as pd
 
 import warnings
 warnings.filterwarnings("ignore")
@@ -17,8 +19,8 @@ def graphcut(img,edges,label_costs, l=100):
 	pairwise_costs = np.zeros((num_classes, num_classes))
 	for ii in range(num_classes):
 		for jj in range(num_classes):
-			c1 = np.array(colors[ii,1:])
-			c2 = np.array(colors[jj,1:])
+			c1 = np.array(colors[ii])
+			c2 = np.array(colors[jj])
 			pairwise_costs[ii,jj] = np.linalg.norm(c1-c2)
 	label_costs_int32 = np.ascontiguousarray(label_costs).astype('int32')
 	pairwise_costs_int32 = (l*pairwise_costs).astype('int32')
@@ -28,34 +30,35 @@ def graphcut(img,edges,label_costs, l=100):
 	return new_labels
 
 
-test = cv2.imread('img_8.jpg',0)
-df = pd.read_csv('pred.csv', sep=',')
-dfpr = pd.read_csv('pred_prob.csv', sep=',')
+test = cv2.imread('Train/img_2.jpg',0)
+original = cv2.imread('Train/img_2.jpg',1)
+dfpr = pd.read_csv('pred_cost.csv', sep=',',header=None)
 colors = pd.read_csv('colors.csv', sep=',',header=None).as_matrix()
-pixels = df.ix[:,:2].as_matrix()
-pred = df.ix[:,2:].as_matrix()
-pred_prob = dfpr.ix[:,2:].as_matrix()
 
+pixels = dfpr.ix[:,:2].as_matrix()
+pred_cost = dfpr.ix[:,2:].as_matrix()
 rows, cols = test.shape
+
+#Colorization
+start = timeit.default_timer()
 label_costs = np.zeros((rows,cols,len(colors)))
 for i,x in enumerate(pixels):
-	cost = -100*pred_prob[i]
+	cost = -100*pred_cost[i]
 	label_costs[x[0],x[1]] = np.array(cost).astype(int)
 edges = get_edges(test)
 output_labels = graphcut(test,edges,label_costs, l=1)
 
-#Colorization
-output_a = np.zeros((rows,cols))
-output_b = np.zeros((rows,cols))
-for i in pixels[:,0]:
-	for j in pixels[:,1]:
-		a,b = colors[output_labels[i,j],1:]
-		output_a[i,j] = a
-		output_b[i,j] = b
+y = np.bincount(output_labels.reshape(rows*cols))
+ii = np.nonzero(y)[0]
+print(np.vstack((ii,y[ii])).T)
 
-output_img = cv2.cvtColor(cv2.merge((test, np.uint8(output_a), np.uint8(output_b))), cv2.COLOR_Lab2RGB)
+pd.DataFrame(output_labels).to_csv('output_labeled.csv', sep=',',header=False,index=False)
+ab = colors[output_labels]
+output_img = cv2.cvtColor(cv2.merge((test, np.uint8(ab[:,:,0]), np.uint8(ab[:,:,1]))), cv2.COLOR_Lab2RGB)
+stop = timeit.default_timer()
+print ("Test - Colorization: Done in ",stop-start," sec - ",output_img.shape)
+diff = cv2.subtract(original, output_img)
+print(np.std(diff))
 
-cv2.imshow('Test',output_img)
 cv2.imwrite('RESULT.jpg',output_img)
-cv2.waitKey(0)
-cv2.destroyAllWindows()
+cv2.imshow('result',output_img)
