@@ -16,7 +16,7 @@ def color_quant(img,k):
 	label_to_color_map = dict(zip(color_to_label_map.values(),color_to_label_map.keys()))
 	return qnt,label_to_color_map
 
-train = cv2.imread('Train/img_1.jpg',1)
+train = cv2.imread('Train/img.jpg',1)
 
 #Color Quantization
 start = timeit.default_timer()

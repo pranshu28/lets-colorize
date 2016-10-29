@@ -29,9 +29,7 @@ def graphcut(img,edges,label_costs, l=100):
 	new_labels = pygco.cut_simple_vh(label_costs_int32, pairwise_costs_int32, vv_int32, vh_int32, n_iter=10, algorithm='swap') 
 	return new_labels
 
-
 test = cv2.imread('Train/img_2.jpg',0)
-original = cv2.imread('Train/img_2.jpg',1)
 dfpr = pd.read_csv('pred_cost.csv', sep=',',header=None)
 colors = pd.read_csv('colors.csv', sep=',',header=None).as_matrix()
 
@@ -47,18 +45,24 @@ for i,x in enumerate(pixels):
 	label_costs[x[0],x[1]] = np.array(cost).astype(int)
 edges = get_edges(test)
 output_labels = graphcut(test,edges,label_costs, l=1)
+pd.DataFrame(output_labels).to_csv('output_labeled.csv', sep=',',header=False,index=False)
 
 y = np.bincount(output_labels.reshape(rows*cols))
 ii = np.nonzero(y)[0]
 print(np.vstack((ii,y[ii])).T)
 
-pd.DataFrame(output_labels).to_csv('output_labeled.csv', sep=',',header=False,index=False)
 ab = colors[output_labels]
 output_img = cv2.cvtColor(cv2.merge((test, np.uint8(ab[:,:,0]), np.uint8(ab[:,:,1]))), cv2.COLOR_Lab2RGB)
 stop = timeit.default_timer()
 print ("Test - Colorization: Done in ",stop-start," sec - ",output_img.shape)
+
+#Compare
+original = cv2.imread('Train/img_2.jpg',1)
+ldiff = cv2.subtract(cv2.cvtColor(original, cv2.COLOR_RGB2Lab),cv2.merge((test, np.uint8(ab[:,:,0]), np.uint8(ab[:,:,1]))))
 diff = cv2.subtract(original, output_img)
-print(np.std(diff))
+print("Error : ",np.std(diff))
 
 cv2.imwrite('RESULT.jpg',output_img)
-cv2.imshow('result',output_img)
+cv2.imshow('result',ldiff)
+cv2.waitKey(0)
+cv2.destroyAllWindows()
