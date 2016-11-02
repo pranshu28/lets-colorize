@@ -8,6 +8,11 @@ import pandas as pd
 import warnings
 warnings.filterwarnings("ignore")
 
+test = cv2.imread('Train/img_2.jpg',0)
+original = cv2.imread('Train/img_2.jpg',1)
+dfpr = pd.read_csv('pred_cost.csv', sep=',',header=None)
+colors = pd.read_csv('colors.csv', sep=',',header=None).as_matrix()
+
 def get_edges(img, blur_width=3):
 	img_blurred = cv2.GaussianBlur(img, (0, 0), blur_width)
 	vh = cv2.Sobel(img_blurred, -1, 1, 0)
@@ -27,11 +32,8 @@ def graphcut(img,edges,label_costs, l=100):
 	vv_int32 = edges.astype('int32')
 	vh_int32 = edges.astype('int32')
 	new_labels = pygco.cut_simple_vh(label_costs_int32, pairwise_costs_int32, vv_int32, vh_int32, n_iter=10, algorithm='swap') 
+	#new_labels = pygco.cut_simple(label_costs_int32, pairwise_costs_int32, n_iter=10, algorithm='swap') 
 	return new_labels
-
-test = cv2.imread('Train/img_2.jpg',0)
-dfpr = pd.read_csv('pred_cost.csv', sep=',',header=None)
-colors = pd.read_csv('colors.csv', sep=',',header=None).as_matrix()
 
 pixels = dfpr.ix[:,:2].as_matrix()
 pred_cost = dfpr.ix[:,2:].as_matrix()
@@ -57,12 +59,11 @@ stop = timeit.default_timer()
 print ("Test - Colorization: Done in ",stop-start," sec - ",output_img.shape)
 
 #Compare
-original = cv2.imread('Train/img_2.jpg',1)
 ldiff = cv2.subtract(cv2.cvtColor(original, cv2.COLOR_RGB2Lab),cv2.merge((test, np.uint8(ab[:,:,0]), np.uint8(ab[:,:,1]))))
 diff = cv2.subtract(original, output_img)
 print("Error : ",np.std(diff))
 
 cv2.imwrite('RESULT.jpg',output_img)
-cv2.imshow('result',ldiff)
+cv2.imshow('result',diff)
 cv2.waitKey(0)
 cv2.destroyAllWindows()

@@ -4,6 +4,8 @@ from scipy.cluster.vq import kmeans,vq
 import cv2
 import pandas as pd
 
+train = cv2.imread('Train/img.jpg',1)
+
 k = 16								#K-means no. of discrete colors
 
 def color_quant(img,k):
@@ -15,8 +17,6 @@ def color_quant(img,k):
 	color_to_label_map = {c:i for i,c in enumerate([tuple(i) for i in centroids])} 
 	label_to_color_map = dict(zip(color_to_label_map.values(),color_to_label_map.keys()))
 	return qnt,label_to_color_map
-
-train = cv2.imread('Train/img.jpg',1)
 
 #Color Quantization
 start = timeit.default_timer()

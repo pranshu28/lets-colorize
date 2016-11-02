@@ -9,8 +9,8 @@ warnings.filterwarnings("ignore")
 test = cv2.imread('Train/img_2.jpg',0)
 rows, cols = test.shape
 
-x = 7								#Window size/2
-red = 16							#PCA Reduce components
+x = 5								#Window size/2
+red = 32							#PCA Reduce components
 temp = rows*cols					#No. of pixels to test
 
 def ftr_ext(crow,ccol,octave1,octave2,img):
@@ -40,15 +40,15 @@ def ftr_ext(crow,ccol,octave1,octave2,img):
 	ind_ftr[:4*x*x] = ft
 
 	#SURF
-	kp = cv2.KeyPoint(crow, ccol, 20)
+	kp = cv2.KeyPoint(crow, ccol, 2*x)
 	_, des1 = surf.compute(img, [kp])
 	_, des2 = surf.compute(octave2, [kp])
 	_, des3 = surf.compute(octave3, [kp])
 	if len(_)>0:
-		ind_ftr[4*x*x:4*x*x+128] = des1.mean(0)
-		ind_ftr[4*x*x+128:4*x*x+256] = des2.mean(0)
-		ind_ftr[4*x*x+256:4*x*x+384] = des3.mean(0)
-	else: 
+		ind_ftr[4*x*x:4*x*x+128] = des1[0]
+		ind_ftr[4*x*x+128:4*x*x+256] = des2[0]
+		ind_ftr[4*x*x+256:4*x*x+384] = des3[0]
+	else:
 		flag = 0
 
 	#Position
