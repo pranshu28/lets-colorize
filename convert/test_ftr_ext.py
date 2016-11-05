@@ -88,7 +88,7 @@ class test_ftr_ext(object):
 		#PCA
 		self.pca_ftr_test_ftr = self.pca_(self.features,self.red)
 		stop = timeit.default_timer()
-		print ("test_ftr - Feature Extraction and PCA: Done in ",stop-start," sec - Reduced components: ",self.pca_ftr_test_ftr.shape)
+		print ("Test - Feature Extraction and PCA: Done in ",stop-start," sec - Reduced components: ",self.pca_ftr_test_ftr.shape)
 
 	#Save
 	def export(self):
