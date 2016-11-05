@@ -88,9 +88,9 @@ class test_ftr_ext(object):
 		#PCA
 		self.pca_ftr_test_ftr = self.pca_(self.features,self.red)
 		stop = timeit.default_timer()
-		print ("Test - Feature Extraction and PCA: Done in ",stop-start," sec - Reduced components: ",self.pca_ftr_test_ftr.shape)
+		print ("Test -	Feature Extraction and PCA: Done in ",stop-start," sec - Reduced components: ",self.pca_ftr_test_ftr.shape)
 
 	#Save
 	def export(self):
 		dft = pd.DataFrame(np.concatenate((self.pixels, self.pca_ftr_test_ftr), 1))
-		dft.to_csv('ftr_ext_test_ftr.csv', sep=',',header=False,index=False)
+		dft.to_csv('ftr_ext_test.csv', sep=',',header=False,index=False)
