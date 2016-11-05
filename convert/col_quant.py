@@ -5,7 +5,7 @@ from scipy.cluster.vq import kmeans,vq
 import cv2
 
 class col_quant(object):
-	def __init__(self, train='Train/img.jpg', ncolors=16):
+	def __init__(self, train, ncolors=16):
 		self.k=ncolors
 		self.train=cv2.imread(train,1)
 

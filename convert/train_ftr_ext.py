@@ -10,7 +10,7 @@ warnings.filterwarnings("ignore")
 
 class train_ftr_ext(object):
 
-	def __init__(self, train_ftr='Train/img.jpg', x=5,red=32,perc=10):
+	def __init__(self, train_ftr, x=5,red=32,perc=10):
 		self.labeled = np.matrix(pd.read_csv('labeled.csv', sep=',',header=None))
 		self.train_ftr = cv2.imread(train_ftr,0)
 		self.rows, self.cols = self.train_ftr.shape

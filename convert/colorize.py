@@ -6,7 +6,7 @@ import cv2
 
 class colorize(object):
 
-	def __init__(self, original = 'Train/img_2.jpg'):
+	def __init__(self, original):
 		self.test = cv2.imread(original,0)
 		self.original = cv2.imread(original,1)
 		self.dfpr = pd.read_csv('pred_cost.csv', sep=',',header=None)
