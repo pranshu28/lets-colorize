@@ -97,7 +97,7 @@ class train_ftr_ext(object):
 		#PCA
 		self.pca_ftr = self.pca_(self.features,self.red)
 		stop = timeit.default_timer()
-		print ("Train - Feature Extraction and PCA: Done in ",stop-start," sec - Reduced components: ",self.pca_ftr.shape)
+		print ("Train -	Feature Extraction and PCA: Done in ",stop-start," sec - Reduced components: ",self.pca_ftr.shape)
 
 	#Save
 	def export(self):
