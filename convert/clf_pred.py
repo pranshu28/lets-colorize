@@ -25,7 +25,7 @@ class clf_pred(object):
 			clf.fit(pca_ftr,y)
 			self.clfs.append(clf)
 		stop = timeit.default_timer()
-		print ("Train - Classification: Done in ",stop-start," sec - Feature: ",pca_ftr.shape,"	Data: ",self.Y.shape)
+		print ("Train -	Classification: Done in ",stop-start," sec - Feature: ",pca_ftr.shape,"	Data: ",self.Y.shape)
 
 	#Predict
 	def pred(self):
@@ -36,7 +36,7 @@ class clf_pred(object):
 		for i,x in enumerate(self.Y):
 			self.costs.append(self.clfs[i].decision_function(pca_ftr_test))
 		stop = timeit.default_timer()
-		print ("Test - Prediction: Done in ",stop-start," sec - Test: ",pca_ftr_test.shape,"	Result: ",np.matrix(self.costs).shape)
+		print ("Test -	Prediction: Done in ",stop-start," sec - Test: ",pca_ftr_test.shape,"	Result: ",np.matrix(self.costs).shape)
 
 	#Save
 	def export(self):
