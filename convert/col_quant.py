@@ -26,7 +26,7 @@ class col_quant(object):
 		self.labeled = pd.DataFrame(qnt.reshape(self.train.shape[:-1]))
 		self.colors = pd.DataFrame(label).transpose()
 		stop = timeit.default_timer()
-		print ("Train - Color Quantization: Done in ",stop-start," sec")
+		print ("Train -	Color Quantization: Done in ",stop-start," sec")
 
 	#Save
 	def export(self):

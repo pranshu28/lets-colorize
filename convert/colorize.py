@@ -53,13 +53,13 @@ class colorize(object):
 		self.ab = self.colors[output_labels]
 		self.output_img = cv2.cvtColor(cv2.merge((self.test, np.uint8(self.ab[:,:,0]), np.uint8(self.ab[:,:,1]))), cv2.COLOR_Lab2RGB)
 		stop = timeit.default_timer()
-		print ("Test - Colorization: Done in ",stop-start," sec - ",self.output_img.shape)
-		return output_img
+		print ("Test -	Colorization: Done in ",stop-start," sec - ",self.output_img.shape)
+		return self.output_img
 
 	#Compare
 	def compare(self):
 		diff = cv2.subtract(self.original, self.output_img)
-		print("Error : ",np.std(diff))
+		print("Error -	",np.std(diff))
 		return diff
 
 	#Save
