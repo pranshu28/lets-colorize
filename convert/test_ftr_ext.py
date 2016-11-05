@@ -93,4 +93,4 @@ class test_ftr_ext(object):
 	#Save
 	def export(self):
 		dft = pd.DataFrame(np.concatenate((self.pixels, self.pca_ftr_test_ftr), 1))
-		dft.to_csv('ftr_ext_test_ftr.csv', sep=',',header=False,index=False)
+		dft.to_csv('ftr_ext_test.csv', sep=',',header=False,index=False)
