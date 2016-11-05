@@ -47,23 +47,20 @@ class colorize(object):
 		edges = self.get_edges()
 		output_labels = self.graphcut(edges,label_costs, l=1)
 		pd.DataFrame(output_labels).to_csv('output_labeled.csv', sep=',',header=False,index=False)
-
-		y = np.bincount(output_labels.reshape(self.rows*self.cols))
-		ii = np.nonzero(y)[0]
-		print(np.vstack((ii,y[ii])).T)
-
+		#y = np.bincount(output_labels.reshape(self.rows*self.cols))
+		#ii = np.nonzero(y)[0]
+		#print(np.vstack((ii,y[ii])).T)
 		self.ab = self.colors[output_labels]
 		self.output_img = cv2.cvtColor(cv2.merge((self.test, np.uint8(self.ab[:,:,0]), np.uint8(self.ab[:,:,1]))), cv2.COLOR_Lab2RGB)
 		stop = timeit.default_timer()
 		print ("Test - Colorization: Done in ",stop-start," sec - ",self.output_img.shape)
+		return output_img
 
 	#Compare
 	def compare(self):
 		diff = cv2.subtract(self.original, self.output_img)
 		print("Error : ",np.std(diff))
-		cv2.imshow('result',diff)
-		cv2.waitKey(0)
-		cv2.destroyAllWindows()
+		return diff
 
 	#Save
 	def export(self):

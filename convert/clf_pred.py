@@ -21,7 +21,7 @@ class clf_pred(object):
 		self.Y = MultiLabelBinarizer().fit_transform(train_svc.reshape(len(train_svc),1)).T
 		for i,y in enumerate(self.Y):
 			clf = LinearSVC(C=self.reg)
-			print(i)
+			#print(i)
 			clf.fit(pca_ftr,y)
 			self.clfs.append(clf)
 		stop = timeit.default_timer()
