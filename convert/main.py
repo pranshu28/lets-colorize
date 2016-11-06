@@ -7,8 +7,8 @@ import cv2
 
 if __name__ == '__main__':
 
-	train = 'Train/img.jpg'
-	test='Train/img_2.jpg'
+	train = 'Train/img.jpg'						#Trainig colored file path
+	test='Train/img_2.jpg'						#Testing gray file path
 	k = 16								#No. of colors
 	x = 5								#Window size/2
 	red = 32							#PCA Reduce components
