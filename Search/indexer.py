@@ -3,6 +3,7 @@ from os.path import join
 import ftr_extr_search as ftr
 import pandas as pd
 import csv
+import numpy as np
 
 directory="/media/deathstroke/Work/Study/Image-colorization/jpg/"
 
@@ -20,27 +21,36 @@ def find(directory):
 	# return indexf1,indexf2,indexf3,indexf4
 
 find(directory)
+df1 = pd.DataFrame.from_dict(indexf1,orient='index')
+df2 = pd.DataFrame.from_dict(indexf2,orient='index')
+df3 = pd.DataFrame.from_dict(indexf3,orient='index')
+df4 = pd.DataFrame.from_dict(indexf4,orient='index')
+df1.to_csv('index1.csv',header=None)
+df2.to_csv('index2.csv',header=None)
+df3.to_csv('index3.csv',header=None)
+df4.to_csv('index4.csv',header=None)
+# #Writing indexes into seperate csv files
+# with open('index1.csv', 'wb') as csv_file:
+#     writer = csv.writer(csv_file)
+#     for key, value in indexf1.items():
+#        writer.writerow([key])
 
-#Writing indexes into seperate csv files
-with open('index1.csv', 'wb') as csv_file:
-    writer = csv.writer(csv_file)
-    for key, value in indexf1.items():
-       writer.writerow([key, value])
+# with open('index2.csv', 'wb') as csv_file:
+#     writer = csv.writer(csv_file)
+#     for key, value in indexf2.items():
+#        writer.writerow([key])
 
-with open('index2.csv', 'wb') as csv_file:
-    writer = csv.writer(csv_file)
-    for key, value in indexf2.items():
-       writer.writerow([key, value])
+# with open('index3.csv', 'wb') as csv_file:
+#     writer = csv.writer(csv_file)
+#     for key, value in indexf3.items():
+#        writer.writerow([key])
+      
 
-with open('index3.csv', 'wb') as csv_file:
-    writer = csv.writer(csv_file)
-    for key, value in indexf3.items():
-       writer.writerow([key, value])
-
-with open('index4.csv', 'wb') as csv_file:
-    writer = csv.writer(csv_file)
-    for key, value in indexf4.items():
-       writer.writerow([key, value])
+# with open('index4.csv', 'wb') as csv_file:
+#     writer = csv.writer(csv_file)
+#     for key, value in indexf4.items():
+#        writer.writerow([key])
+       
 # df1 = pd.DataFrame.from_dict(indexf1,orient='index')
 # df1.to_csv("index1.csv")
 # df2 = pd.DataFrame.from_dict(indexf2,orient='index')
