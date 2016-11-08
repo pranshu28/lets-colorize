@@ -6,7 +6,7 @@ import cv2
 
 class colorize(object):
 
-	def __init__(self, original):
+	def __init__(self, original, sobel=True):
 		self.test = cv2.imread(original,0)
 		self.original = cv2.imread(original,1)
 		self.dfpr = pd.read_csv('pred_cost.csv', sep=',',header=None)
@@ -14,6 +14,7 @@ class colorize(object):
 		self.pixels = self.dfpr.ix[:,:2].as_matrix()
 		self.pred_cost = self.dfpr.ix[:,2:].as_matrix()
 		self.rows, self.cols = self.test.shape
+		self.sobel = sobel
 	
 	def get_edges(self,blur_width=3):
 		img_blurred = cv2.GaussianBlur(self.test, (0, 0), blur_width)
@@ -21,7 +22,7 @@ class colorize(object):
 		vv = cv2.Sobel(img_blurred, -1, 0, 1)
 		return 0.5*vv + 0.5*vh
 
-	def graphcut(self,edges,label_costs, l=100):
+	def graphcut(self,label_costs, l=100):
 		num_classes = len(self.colors)
 		pairwise_costs = np.zeros((num_classes, num_classes))
 		for ii in range(num_classes):
@@ -31,10 +32,13 @@ class colorize(object):
 				pairwise_costs[ii,jj] = np.linalg.norm(c1-c2)
 		label_costs_int32 = np.ascontiguousarray(label_costs).astype('int32')
 		pairwise_costs_int32 = (l*pairwise_costs).astype('int32')
-		vv_int32 = edges.astype('int32')
-		vh_int32 = edges.astype('int32')
-		new_labels = pygco.cut_simple_vh(label_costs_int32, pairwise_costs_int32, vv_int32, vh_int32, n_iter=10, algorithm='swap') 
-		#new_labels = pygco.cut_simple(label_costs_int32, pairwise_costs_int32, n_iter=10, algorithm='swap') 
+		if self.sobel:
+			edges = self.get_edges()
+			vv_int32 = edges.astype('int32')
+			vh_int32 = edges.astype('int32')
+			new_labels = pygco.cut_simple_vh(label_costs_int32, pairwise_costs_int32, vv_int32, vh_int32, n_iter=10, algorithm='swap') 
+		else:
+			new_labels = pygco.cut_simple(label_costs_int32, pairwise_costs_int32, n_iter=10, algorithm='swap') 
 		return new_labels
 
 	#Colorization
@@ -44,8 +48,7 @@ class colorize(object):
 		for i,x in enumerate(self.pixels):
 			cost = -100*self.pred_cost[i]
 			label_costs[x[0],x[1]] = np.array(cost).astype(int)
-		edges = self.get_edges()
-		output_labels = self.graphcut(edges,label_costs, l=1)
+		output_labels = self.graphcut(label_costs, l=1)
 		pd.DataFrame(output_labels).to_csv('output_labeled.csv', sep=',',header=False,index=False)
 		#y = np.bincount(output_labels.reshape(self.rows*self.cols))
 		#ii = np.nonzero(y)[0]
