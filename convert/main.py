@@ -6,16 +6,16 @@ from colorize import colorize
 import cv2
 
 if __name__ == '__main__':
-	train = 'Train/img.jpg'						#Trainig colored file path
-	test='Train/img_2.jpg'						#Testing gray file path
-	
-	#Parameters
+
+	train = 'Train/img.jpg'
+	test='Train/img_2.jpg'
 	k = 16								#No. of colors
 	x = 5								#Window size/2
 	red = 32							#PCA Reduce components
 	perc = 10							#Percentage of random pixels to train
 	reg = 1.0							#Regularization in Classification
-	
+	sobel = True						#Use Sobel weights
+
 	quant = col_quant(train=train, ncolors=k)
 	quant.run()
 	quant.export()
@@ -29,12 +29,11 @@ if __name__ == '__main__':
 	svm.clf()
 	svm.pred()
 	svm.export()
-	colorizer = colorize(original=test)
+	colorizer = colorize(original=test,sobel=sobel)
 	output = colorizer.color()
 	error = colorizer.compare()
 	colorizer.export()
-	
-	#Show
+
 	cv2.imshow('Output',output)
 	cv2.imshow('Error',error)
 	cv2.waitKey(0)
