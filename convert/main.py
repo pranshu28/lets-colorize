@@ -8,13 +8,14 @@ import cv2
 if __name__ == '__main__':
 	train = 'Train/img.jpg'						#Trainig colored file path
 	test='Train/img_2.jpg'						#Testing gray file path
+	
+	#Parameters
 	k = 16								#No. of colors
 	x = 5								#Window size/2
 	red = 32							#PCA Reduce components
 	perc = 10							#Percentage of random pixels to train
 	reg = 1.0							#Regularization in Classification
 	
-	#Start
 	quant = col_quant(train=train, ncolors=k)
 	quant.run()
 	quant.export()
