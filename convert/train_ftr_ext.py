@@ -1,6 +1,7 @@
 import timeit
 import numpy as np
 import pandas as pd
+
 import scipy.stats as stats
 from sklearn.decomposition import PCA
 import cv2
@@ -98,6 +99,7 @@ class train_ftr_ext(object):
 		self.pca_ftr = self.pca_(self.features,self.red)
 		stop = timeit.default_timer()
 		print ("Train -	Feature Extraction and PCA: Done in ",stop-start," sec - Reduced components: ",self.pca_ftr.shape)
+		return stop-start
 
 	#Save
 	def export(self):

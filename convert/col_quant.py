@@ -1,6 +1,7 @@
 import timeit
 import numpy as np
 import pandas as pd
+
 from scipy.cluster.vq import kmeans,vq
 import cv2
 
@@ -27,6 +28,7 @@ class col_quant(object):
 		self.colors = pd.DataFrame(label).transpose()
 		stop = timeit.default_timer()
 		print ("Train -	Color Quantization: Done in ",stop-start," sec")
+		return stop-start
 
 	#Save
 	def export(self):

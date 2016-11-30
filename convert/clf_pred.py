@@ -1,6 +1,7 @@
 import timeit
 import numpy as np
 import pandas as pd
+
 from sklearn.svm import LinearSVC
 from sklearn.preprocessing import MultiLabelBinarizer
 import cv2
@@ -26,6 +27,7 @@ class clf_pred(object):
 			self.clfs.append(clf)
 		stop = timeit.default_timer()
 		print ("Train -	Classification: Done in ",stop-start," sec - Feature: ",pca_ftr.shape,"	Data: ",self.Y.shape)
+		return stop-start
 
 	#Predict
 	def pred(self):
@@ -37,7 +39,8 @@ class clf_pred(object):
 			self.costs.append(self.clfs[i].decision_function(pca_ftr_test))
 		stop = timeit.default_timer()
 		print ("Test -	Prediction: Done in ",stop-start," sec - Test: ",pca_ftr_test.shape,"	Result: ",np.matrix(self.costs).shape)
-
+		return stop-start
+				
 	#Save
 	def export(self):
 		dfpr = pd.DataFrame(np.concatenate((self.pixels, np.matrix(self.costs).T), 1))

@@ -1,8 +1,10 @@
 import timeit
 import numpy as np
 import pandas as pd
+
 from sklearn.decomposition import PCA
 import cv2
+
 import warnings
 warnings.filterwarnings("ignore")
 
@@ -89,7 +91,8 @@ class test_ftr_ext(object):
 		self.pca_ftr_test_ftr = self.pca_(self.features,self.red)
 		stop = timeit.default_timer()
 		print ("Test -	Feature Extraction and PCA: Done in ",stop-start," sec - Reduced components: ",self.pca_ftr_test_ftr.shape)
-
+		return stop-start
+		
 	#Save
 	def export(self):
 		dft = pd.DataFrame(np.concatenate((self.pixels, self.pca_ftr_test_ftr), 1))
