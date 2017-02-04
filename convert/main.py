@@ -9,11 +9,11 @@ import pandas as pd
 
 if __name__ == '__main__':
 
-	train = 'Train/img.jpg'
-	test='Train/img_2.jpg'
-	k = 8								#No. of colors
+	train = 'Train/img_6.jpg'
+	test='Train/img_6.jpg'
+	k = 16								#No. of colors
 	x = 10								#Window size/2
-	red = 16							#PCA Reduce components
+	red = 32							#PCA Reduce components
 	perc = 10							#Percentage of random pixels to train
 	reg = 1.0							#Regularization in Classification
 	sobel = True						#Use Sobel weights
